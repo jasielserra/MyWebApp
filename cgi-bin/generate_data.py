@@ -1,5 +1,5 @@
 #! /usr/bin/python3
-import sys
+
 import cgi
 import json
 import athletemodel
@@ -11,4 +11,4 @@ athlete_id = form_data['which_athlete'].value
 athlete = athletemodel.get_athlete_from_id(athlete_id)
 
 print(yate.start_response("application/json"))
-print(json.dumps(athlete['top3']))
+print(json.dumps(athlete))
