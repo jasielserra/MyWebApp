@@ -39,7 +39,7 @@ resp = app.dialogGetResponse().result
 
 if resp['which'] in ('positive'):
     selected_athlete = app.dialogGetSelectedItems().result[0]
-    which_athlete = athlete_names[selected_athlete]
+    which_athlete = athlete_names[selected_athlete][1]
     athlete = json.loads(send_to_server(web_server + get_data_cgi,
                                     {'which_athlete': which_athlete}))
 
@@ -47,8 +47,25 @@ if resp['which'] in ('positive'):
     app.dialogCreateAlert(athlete_title)
     app.dialogSetItems(athlete['Top3'])
     app.dialogSetPositiveButtonText('OK')
+    # Need to add another button to add a timing value.
+    app.dialogSetNegativeButtonText('Add Time')
     app.dialogShow()
     resp = app.dialogGetResponse().result
+
+    if resp['which'] in ('positive'):
+        pass
+    elif resp['which'] in ('negative'):
+
+        timing_title  = 'Enter a new time'
+        timing_msg    = 'Provide a new timing value ' + athlete['Name'] + ': '
+        add_time_cgi  = '/cgi-bin/add_timing_data.py'
+
+        resp = app.dialogGetInput(timing_title, timing_msg).result
+        if resp is not None:
+            new_time = resp
+            send_to_server(web_server + add_time_cgi,
+                               {'Time': new_time,
+                                'Athlete': which_athlete})
 
 status_update(quit_msg)
 
